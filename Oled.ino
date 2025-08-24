@@ -1,3 +1,4 @@
+// 定义引脚 SCL -> A5  SDA -> A4
 #include <U8g2lib.h>
 #include <Wire.h>
 
