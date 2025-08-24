@@ -30,8 +30,8 @@ int currentStep = 0;         // 当前步序
 int direction = 1;           // 转动方向: 1=正转, -1=反转
 int targetDirection = 1;     // 目标方向
 bool directionChanging = false; // 方向是否正在改变
-int speedRampSteps = 0;      // 速度斜坡步数计数
-const int RAMP_STEPS = 20;   // 速度斜坡总步数
+unsigned long directionChangeStartTime = 0; // 方向改变开始时间
+const unsigned long DIRECTION_CHANGE_DELAY = 1000; // 方向改变延迟时间(毫秒)
 
 // 初始化电机
 void initMotor() {
@@ -55,7 +55,7 @@ void setTargetDirection(int newDirection) {
   // 如果方向确实需要改变
   if (targetDirection != direction) {
     directionChanging = true;
-    speedRampSteps = 0;
+    directionChangeStartTime = millis(); // 记录开始时间
     Serial.print("开始方向改变: ");
     Serial.println(targetDirection == 1 ? "正转" : "反转");
   }
@@ -66,6 +66,7 @@ void updateMotor() {
   // 处理方向改变
   if (directionChanging) {
     handleDirectionChange();
+    return; // 方向改变期间不执行步进
   }
   
   // 执行步进
@@ -79,26 +80,18 @@ void updateMotor() {
   if (currentStep < 0) currentStep = 7;
 }
 
-// 处理方向改变，实现平滑过渡
+// 处理方向改变，立即停止然后延迟1秒
 void handleDirectionChange() {
-  if (speedRampSteps < RAMP_STEPS) {
-    // 逐渐减速
-    stepDelay = map(speedRampSteps, 0, RAMP_STEPS, 3, 15);
-    speedRampSteps++;
-  } else if (speedRampSteps == RAMP_STEPS) {
-    // 在最低速度时改变方向
+  // 立即停止电机
+  stopMotor();
+  
+  // 检查是否已经延迟了足够时间
+  if (millis() - directionChangeStartTime >= DIRECTION_CHANGE_DELAY) {
+    // 延迟时间到，改变方向
     direction = targetDirection;
+    directionChanging = false;
     Serial.print("方向已改变为: ");
     Serial.println(direction == 1 ? "正转" : "反转");
-    speedRampSteps++;
-  } else if (speedRampSteps < RAMP_STEPS * 2) {
-    // 逐渐加速
-    stepDelay = map(speedRampSteps, RAMP_STEPS, RAMP_STEPS * 2, 15, 3);
-    speedRampSteps++;
-  } else {
-    // 方向改变完成
-    directionChanging = false;
-    stepDelay = 3; // 恢复正常速度
     Serial.println("方向改变完成");
   }
 }
