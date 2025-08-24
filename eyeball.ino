@@ -16,6 +16,9 @@ void setup() {
    // 初始化电机
    initMotor();
    
+   initOLED();
+
+
    // 初始化串口用于调试（可选）
    Serial.begin(9600);
 }
@@ -47,4 +50,6 @@ void loop() {
       Serial.println("电机停止");
     }
   }
+
+  // showOLED();
 }
