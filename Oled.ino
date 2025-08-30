@@ -5,7 +5,9 @@
 // 初始化U8g2 for SH1106
 U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 
-void initOLED() {
+String oled_current_text = "";
+
+void oled_init() {
     u8g2.begin();
     
     // 显示启动信息
@@ -15,25 +17,21 @@ void initOLED() {
     u8g2.drawStr(0, 30, "初始化成功!");
     u8g2.sendBuffer();
     delay(2000);
-    showOLED();
+    oled_show("----^v--v^----");
 }
 
-void showOLED() {
-  // 显示Hello World
+void oled_show(String text) {
   u8g2.clearBuffer();
   u8g2.setFont(u8g2_font_ncenB14_tr);
-  u8g2.drawStr(10, 30, "Hello");
-  u8g2.drawStr(20, 50, "World!");
+  u8g2.drawStr(10, 30, text.c_str());
   u8g2.sendBuffer();
-//   delay(3000);
+}
+
+void oled_update(String text) {
+  if (oled_current_text == text) return;
   
-//   // 显示不同字体
-//   showDifferentFonts();
-//   delay(3000);
-  
-//   // 显示滚动文本
-//   scrollText();
-//   delay(2000);
+  oled_current_text = text;
+  oled_show(text);
 }
 
 void showDifferentFonts() {
