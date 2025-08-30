@@ -6,6 +6,7 @@ const int motor_pin4 = 11;
 
 const int motor_control_pin = 12; // 输入信号引脚
 
+
 // 步序（半步 8 步）
 const int step_sequence[8][4] = {
   {1, 0, 0, 0},
@@ -19,6 +20,9 @@ const int step_sequence[8][4] = {
 };
 
 bool motor_clockwise = true;   // 当前方向
+
+bool motor_running_state = false;   // 控制电机启动/停止
+
 int motor_lastSignal = HIGH;   // 上次信号
 
 void motor_init() {
@@ -31,6 +35,8 @@ void motor_init() {
 
   // 启用内部上拉
   pinMode(motor_control_pin, INPUT_PULLUP);
+
+  motor_running_state = false;
 
   // 读取初始信号
   motor_lastSignal = digitalRead(motor_control_pin);
@@ -59,6 +65,12 @@ void motor_step(bool dir) {
 }
 
 void motor_run() {
+  if (!motor_running_state) {
+    motor_stop();
+    return;
+  }
+
+
   // 读取信号
   int signal = digitalRead(motor_control_pin);
 
@@ -73,4 +85,12 @@ void motor_run() {
 
   // 持续转动当前方向
   motor_step(motor_clockwise);
+}
+
+
+void motor_stop() {
+  digitalWrite(motor_pin1, LOW);
+  digitalWrite(motor_pin2, LOW);
+  digitalWrite(motor_pin3, LOW);
+  digitalWrite(motor_pin4, LOW);
 }

@@ -2,12 +2,14 @@
 
 
 void setup() {
-   motor_init();
+  button_init();
+  motor_init();
 
-   // 初始化串口用于调试（可选）
-   Serial.begin(9600);
+  // 初始化串口用于调试（可选）
+  Serial.begin(9600);
 }
 
 void loop() {
+  button_run();
   motor_run();
 }
