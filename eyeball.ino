@@ -2,14 +2,21 @@
 
 
 void setup() {
+
   button_init();
   motor_init();
+  light_sensor_init();
+  
 
-  // 初始化串口用于调试（可选）
-  Serial.begin(9600);
+   // 初始化串口用于调试（可选）
+   Serial.begin(9600);
+
+   Serial.println("eyeball.ino initialized.");
+
 }
 
 void loop() {
   button_run();
   motor_run();
+  lightSensor_run();
 }

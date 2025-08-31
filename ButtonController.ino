@@ -1,5 +1,5 @@
-// 引入外部变量
-extern bool motor_running_state;
+// // 引入外部变量
+extern bool lightSensor_running_state;
 
 const int button_pin = 6;       // 按钮引脚
 int button_state = HIGH;         // 当前按钮状态
@@ -22,7 +22,7 @@ void button_run() {
     // 你可以在这儿添加控制电机的代码，例如：
     // motor_start();  // 电机启动
     // motor_stop();   // 电机停止
-    motor_running_state = !motor_running_state;
+    lightSensor_running_state = !lightSensor_running_state;
     delay(200);  // 防抖延迟，确保按钮按下后信号稳定
   }
 

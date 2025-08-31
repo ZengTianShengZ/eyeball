@@ -25,9 +25,9 @@ bool motor_running_state = false;   // 控制电机启动/停止
 
 int motor_lastSignal = HIGH;   // 上次信号
 
-void motor_init() {
-  Serial.begin(115200);
+int motor_round_cout = 0; // 电机往返次数
 
+void motor_init() {
   pinMode(motor_pin1, OUTPUT);
   pinMode(motor_pin2, OUTPUT);
   pinMode(motor_pin3, OUTPUT);
@@ -37,6 +37,8 @@ void motor_init() {
   pinMode(motor_control_pin, INPUT_PULLUP);
 
   motor_running_state = false;
+
+  motor_round_cout = 0;
 
   // 读取初始信号
   motor_lastSignal = digitalRead(motor_control_pin);
@@ -79,6 +81,7 @@ void motor_run() {
     motor_clockwise = !motor_clockwise;  // 翻转方向
     Serial.print("GND detected! Now direction: ");
     Serial.println(motor_clockwise ? "CW" : "CCW");
+    motor_round_cout++;
   }
 
   motor_lastSignal = signal;
