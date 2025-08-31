@@ -3,6 +3,7 @@
 
 void setup() {
 
+  oled_init();
   button_init();
   motor_init();
   light_sensor_init();
