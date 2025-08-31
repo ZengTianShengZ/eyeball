@@ -1,4 +1,5 @@
 extern bool motor2_running_state;
+extern bool lightSensor2_running_state;
 
 const int button2_pin = 2;       // 按钮引脚
 int button2_state = HIGH;         // 当前按钮状态
@@ -17,7 +18,8 @@ void button2_run() {
   // 检测按钮按下的边沿（从 HIGH -> LOW）
   if (button2_state == LOW && button2_last_state == HIGH) {
     Serial.println("Button2 pressed!");
-    motor2_running_state = !motor2_running_state;
+    // motor2_running_state = !motor2_running_state;
+    lightSensor2_running_state = !lightSensor2_running_state;
     delay(200);  // 防抖延迟，确保按钮按下后信号稳定
   }
 

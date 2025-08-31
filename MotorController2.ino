@@ -79,10 +79,7 @@ void motor2_run() {
 
   // 如果接触到 GND（LOW），直接反向
   if (signal == LOW && motor2_lastSignal == HIGH) {
-    motor2_clockwise = !motor2_clockwise;  // 翻转方向
-    Serial.print("GND detected! Now direction: ");
-    Serial.println(motor2_clockwise ? "CW" : "CCW");
-    motor2_round_cout++;
+    motor2_running_state = false;
   }
 
   motor2_lastSignal = signal;
