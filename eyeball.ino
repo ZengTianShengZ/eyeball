@@ -20,4 +20,6 @@ void loop() {
   button_run();
   motor_run();
   lightSensor_run();
+
+  oled_update(7, 2, "F");
 }
