@@ -6,8 +6,6 @@ const int motor_pin4 = 11;
 
 const int motor_control_pin = 12; // 输入信号引脚
 
-const int motor_type_one = 4; // 电机类型1
-const int motor_type_two = 5; // 电机类型2
 
 // 步序（半步 8 步）
 const int step_sequence[8][4] = {
@@ -41,9 +39,6 @@ void motor_init() {
   motor_running_state = false;
 
   motor_round_cout = 0;
-
-  digitalWrite(motor_type_one, HIGH);
-  digitalWrite(motor_type_two, HIGH);
 
 
   // 读取初始信号
@@ -102,14 +97,4 @@ void motor_stop() {
   digitalWrite(motor_pin2, LOW);
   digitalWrite(motor_pin3, LOW);
   digitalWrite(motor_pin4, LOW);
-}
-
-void motor_type_one_start() {
-  digitalWrite(motor_type_one, LOW);
-  digitalWrite(motor_type_two, HIGH);
-}
-
-void motor_type_two_start() {
-  digitalWrite(motor_type_one, HIGH);
-  digitalWrite(motor_type_two, LOW);
 }

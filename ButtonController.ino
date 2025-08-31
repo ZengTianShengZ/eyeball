@@ -2,7 +2,7 @@
 extern bool lightSensor_running_state;
 extern void oled_update(int x, int y, String text);
 
-const int button_pin = 6;       // 按钮引脚
+const int button_pin = 3;       // 按钮引脚
 int button_state = HIGH;         // 当前按钮状态
 int button_last_state = HIGH;     // 上次按钮状态
 
@@ -21,10 +21,6 @@ void button_run() {
     Serial.println("Button pressed!");
     oled_update(1, 2, "-^-^-");
 
-    // 在这里控制电机的启动/停止
-    // 你可以在这儿添加控制电机的代码，例如：
-    // motor_start();  // 电机启动
-    // motor_stop();   // 电机停止
     lightSensor_running_state = !lightSensor_running_state;
     delay(200);  // 防抖延迟，确保按钮按下后信号稳定
   }
