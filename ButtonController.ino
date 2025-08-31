@@ -1,6 +1,6 @@
 // // 引入外部变量
 extern bool lightSensor_running_state;
-extern void oled_update(int x, int y, String text);
+extern void oled_show_init();
 
 const int button_pin = 3;       // 按钮引脚
 int button_state = HIGH;         // 当前按钮状态
@@ -19,7 +19,7 @@ void button_run() {
   // 检测按钮按下的边沿（从 HIGH -> LOW）
   if (button_state == LOW && button_last_state == HIGH) {
     Serial.println("Button pressed!");
-    oled_update(1, 2, "-^-^-");
+    oled_show_init();
 
     lightSensor_running_state = !lightSensor_running_state;
     delay(200);  // 防抖延迟，确保按钮按下后信号稳定

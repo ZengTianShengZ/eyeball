@@ -49,7 +49,7 @@ void lightSensor_run() {
     Serial.print("stop >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
     lightSensor_running_state = false;
     motor_running_state = false;
-    oled_update(7, 2, "F");
+    oled_show_shang();
     delay(5000); 
   } else {
     motor_running_state = true;
