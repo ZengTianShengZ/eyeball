@@ -10,26 +10,16 @@ U8X8_SSD1306_128X64_NONAME_HW_I2C u8x8(U8X8_PIN_NONE);
 
 void oled_init(void) {
   u8x8.begin();
-
   // 选择大字体（支持大写字母）
   u8x8.setFont(u8x8_font_inb33_3x6_r);
-
-
   oled_current_text = "Hello";
-
-  // u8x8.drawString(1, 2, "-^-^-");
-
-
-  // 在屏幕居中绘制一个大写 F
-  // u8x8.drawString(7, 2, "F");
-
   oled_update(1, 2, "-^-^-");
 }
 
 void oled_update(int x, int y, String text) {
   if (text != oled_current_text) {
-    u8x8.clearDisplay();          // 清空屏幕
-    u8x8.drawString(x, y, text.c_str());
     oled_current_text = text;
+    u8x8.clearDisplay();
+    u8x8.drawString(x, y, text.c_str());
   }
 }

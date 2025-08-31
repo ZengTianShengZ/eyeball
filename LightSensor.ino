@@ -1,5 +1,6 @@
 extern bool motor_running_state;
 extern int motor_round_cout;
+extern void oled_update(int x, int y, String text);
 
 // 定义引脚
 const int lightSensor_DO = A0;    // 光敏模块DO引脚连接数字引脚2
@@ -48,6 +49,7 @@ void lightSensor_run() {
     Serial.print("stop >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
     lightSensor_running_state = false;
     motor_running_state = false;
+    oled_update(7, 2, "F");
     delay(5000); 
   } else {
     motor_running_state = true;
