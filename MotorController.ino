@@ -7,15 +7,10 @@ const int motor_pin4 = 11;
 const int motor_control_pin = 12; // 输入信号引脚
 
 
-// 步序（半步 8 步）
-const int step_sequence[8][4] = {
-  {1, 0, 0, 0},
+const int step_sequence[4][4] = {
   {1, 1, 0, 0},
-  {0, 1, 0, 0},
   {0, 1, 1, 0},
-  {0, 0, 1, 0},
   {0, 0, 1, 1},
-  {0, 0, 0, 1},
   {1, 0, 0, 1}
 };
 
@@ -54,7 +49,7 @@ void motor_step(bool dir) {
       digitalWrite(motor_pin2, step_sequence[i][1]);
       digitalWrite(motor_pin3, step_sequence[i][2]);
       digitalWrite(motor_pin4, step_sequence[i][3]);
-      delay(2);
+      delay(5);
     }
   } else { // 逆时针
     for (int i = 7; i >= 0; i--) {
@@ -62,7 +57,7 @@ void motor_step(bool dir) {
       digitalWrite(motor_pin2, step_sequence[i][1]);
       digitalWrite(motor_pin3, step_sequence[i][2]);
       digitalWrite(motor_pin4, step_sequence[i][3]);
-      delay(2);
+      delay(5);
     }
   }
 }
