@@ -12,6 +12,7 @@ int lens_motor_run_state = HIGH;
 int lens_motor_last_state = HIGH;
 
 unsigned long lens_last_direction_change_time = 0;
+unsigned long lens_last_control_low_pin_check_time = 0;
 const unsigned long lens_direction_grace_period = 1000; // 宽限时间（毫秒）
 
 const int lens_step_sequence[4][4] = {
@@ -55,6 +56,28 @@ void lens_motor_step(int dir) {
   }
 }
 
+void lens_motor_control_low_pin_check() {
+  int signal = digitalRead(lens_motor_control_pin);
+
+  if (signal != LOW) {
+    lens_motor_stop();
+    return;
+  }
+
+  unsigned long now = millis();
+
+  if (now - lens_last_control_low_pin_check_time > 6000) {
+   return;
+  }
+
+  if (now - lens_last_control_low_pin_check_time > 3000 && signal == LOW) {
+    lens_motor_run_state_change();
+  }
+ 
+  lens_motor_step(lens_motor_run_state);
+  lens_motor_control_low_pin_check();
+}
+
 void lens_motor_run_state_change() {
   if (lens_motor_run_state == HIGH) {
     lens_motor_run_state = LOW;
@@ -75,6 +98,8 @@ void lens_motor_stop() {
 
 void lens_motor_run() {
   if (!lens_light_sensor_running_state) {
+    lens_last_control_low_pin_check_time = millis();
+    lens_motor_control_low_pin_check();
     return;
   }
 

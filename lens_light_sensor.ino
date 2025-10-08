@@ -1,14 +1,11 @@
 extern int lens_motor_run_state_change_count;
+extern void lens_motor_stop();
 
 // 定义引脚
 const int lens_light_sensor_DO = A0;    // 光敏模块DO数字引脚连接 A0
 
 bool lens_light_sensor_running_state = false; // 是否开启光敏传感器
 int lens_light_sensor_last_num = 2000;  // 初始值
-
-unsigned long lens_light_sensor_last_detection_time = 0;
-const unsigned long lens_light_sensor_detection_grace_period = 500; // 宽限时间（毫秒）
-
 
 void lens_light_sensor_init() {  
   pinMode(lens_light_sensor_DO, INPUT);
@@ -32,18 +29,11 @@ void lens_light_sensor_run() {
     return;
   }
 
-  // unsigned long now = millis();
-
-  // if (now - lens_light_sensor_last_detection_time < lens_light_sensor_detection_grace_period) {
-  //   return;
-  // }
-
   int lens_light_sensor_num = analogRead(lens_light_sensor_DO);
 
+  // 如果当前数值小于等于最后数值，且大于10，则更新最后数值
   if ((lens_light_sensor_num <= lens_light_sensor_last_num) && lens_light_sensor_num > 10) {
-
     lens_light_sensor_last_num = lens_light_sensor_num;
-
   }
 
   int difference = abs(lens_light_sensor_num - lens_light_sensor_last_num);
@@ -54,8 +44,6 @@ void lens_light_sensor_run() {
   if (lens_motor_run_state_change_count > 1 &&  difference < 5) {
     Serial.println("光敏传感器_lens 最后数值 ++++++++++: " + String(lens_light_sensor_last_num));
     lens_light_sensor_running_state = false;
+    lens_motor_stop();
   }
-
- 
-
 }

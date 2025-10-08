@@ -71,6 +71,7 @@ void pupil_motor_stop() {
 
 void pupil_motor_run() {
   if (!pupil_light_sensor_running_state) {
+    pupil_motor_stop();
     return;
   }
 
