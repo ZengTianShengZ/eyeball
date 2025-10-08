@@ -10,10 +10,10 @@ const int pupil_motor_control_pin = 13; // 输入信号引脚
 int pupil_motor_run_state = HIGH;
 int pupil_motor_last_state = HIGH;
 
-unsigned long last_direction_change_time = 0;
-const unsigned long direction_grace_period = 1000; // 宽限时间（毫秒）
+unsigned long pupil_last_direction_change_time = 0;
+const unsigned long pupil_direction_grace_period = 1000; // 宽限时间（毫秒）
 
-const int step_sequence[4][4] = {
+const int pupil_step_sequence[4][4] = {
   {1, 1, 0, 0},
   {0, 1, 1, 0},
   {0, 0, 1, 1},
@@ -37,18 +37,18 @@ void pupil_motor_init() {
 void pupil_motor_step(int dir) {
   if (dir == LOW) { // 顺时针
     for (int i = 0; i < 4; i++) {
-      digitalWrite(pupil_motor_pin1, step_sequence[i][0]);
-      digitalWrite(pupil_motor_pin2, step_sequence[i][1]);
-      digitalWrite(pupil_motor_pin3, step_sequence[i][2]);
-      digitalWrite(pupil_motor_pin4, step_sequence[i][3]);
+      digitalWrite(pupil_motor_pin1, pupil_step_sequence[i][0]);
+      digitalWrite(pupil_motor_pin2, pupil_step_sequence[i][1]);
+      digitalWrite(pupil_motor_pin3, pupil_step_sequence[i][2]);
+      digitalWrite(pupil_motor_pin4, pupil_step_sequence[i][3]);
       delay(3);
     }
   } else { // 逆时针
     for (int i = 3; i >= 0; i--) {
-      digitalWrite(pupil_motor_pin1, step_sequence[i][0]);
-      digitalWrite(pupil_motor_pin2, step_sequence[i][1]);
-      digitalWrite(pupil_motor_pin3, step_sequence[i][2]);
-      digitalWrite(pupil_motor_pin4, step_sequence[i][3]);
+      digitalWrite(pupil_motor_pin1, pupil_step_sequence[i][0]);
+      digitalWrite(pupil_motor_pin2, pupil_step_sequence[i][1]);
+      digitalWrite(pupil_motor_pin3, pupil_step_sequence[i][2]);
+      digitalWrite(pupil_motor_pin4, pupil_step_sequence[i][3]);
       delay(3);
     }
   }
@@ -57,7 +57,7 @@ void pupil_motor_step(int dir) {
 void pupil_motor_run_state_change(int state) {
   if (pupil_motor_run_state != state) {
     pupil_motor_run_state = state;
-    last_direction_change_time = millis(); // 记录方向切换时间
+    pupil_last_direction_change_time = millis(); // 记录方向切换时间
     Serial.println("Direction changed!");
   }
 }
@@ -78,7 +78,7 @@ void pupil_motor_run() {
   unsigned long now = millis();
 
   // 如果不是刚换方向，并且信号 LOW，且方向和上次相同 → 停止
-  if ((now - last_direction_change_time > direction_grace_period) &&
+  if ((now - pupil_last_direction_change_time > pupil_direction_grace_period) &&
       signal == LOW &&
       pupil_motor_last_state == pupil_motor_run_state) {
     pupil_motor_stop();

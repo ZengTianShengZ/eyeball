@@ -6,12 +6,20 @@ void setup() {
   pupil_light_sensor_init();
   pupil_motor_init();
 
+  lens_button_init();
+  lens_light_sensor_init();
+  lens_motor_init();
+
 }
 
 void loop() {
   pupil_button_run();
   pupil_light_sensor_run();
   pupil_motor_run();
+
+  lens_button_run();
+  lens_light_sensor_run();
+  lens_motor_run();
 
 }
  
