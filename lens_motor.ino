@@ -1,12 +1,13 @@
 extern bool lens_light_sensor_running_state;
 
-const int lens_motor_pin1 = 4;
-const int lens_motor_pin2 = 5;
-const int lens_motor_pin3 = 6;
-const int lens_motor_pin4 = 7;
+const int lens_motor_pin1 = 8;
+const int lens_motor_pin2 = 9;
+const int lens_motor_pin3 = 10;
+const int lens_motor_pin4 = 11;
 
-const int lens_motor_control_pin = 13; // 输入信号引脚
+const int lens_motor_control_pin = 12; // 输入信号引脚
 
+int lens_motor_run_state_change_count = 0;
 int lens_motor_run_state = HIGH;
 int lens_motor_last_state = HIGH;
 
@@ -41,7 +42,7 @@ void lens_motor_step(int dir) {
       digitalWrite(lens_motor_pin2, lens_step_sequence[i][1]);
       digitalWrite(lens_motor_pin3, lens_step_sequence[i][2]);
       digitalWrite(lens_motor_pin4, lens_step_sequence[i][3]);
-      delay(3);
+      delay(8);
     }
   } else { // 逆时针
     for (int i = 3; i >= 0; i--) {
@@ -49,17 +50,20 @@ void lens_motor_step(int dir) {
       digitalWrite(lens_motor_pin2, lens_step_sequence[i][1]);
       digitalWrite(lens_motor_pin3, lens_step_sequence[i][2]);
       digitalWrite(lens_motor_pin4, lens_step_sequence[i][3]);
-      delay(3);
+      delay(8);
     }
   }
 }
 
-void lens_motor_run_state_change(int state) {
-  if (lens_motor_run_state != state) {
-    lens_motor_run_state = state;
-    lens_last_direction_change_time = millis(); // 记录方向切换时间
-    Serial.println("Direction changed!");
+void lens_motor_run_state_change() {
+  if (lens_motor_run_state == HIGH) {
+    lens_motor_run_state = LOW;
+  } else {
+    lens_motor_run_state = HIGH;
   }
+  lens_last_direction_change_time = millis(); // 记录方向切换时间
+  lens_motor_run_state_change_count++;
+  Serial.println("lens_motor Direction changed!");
 }
 
 void lens_motor_stop() {
@@ -77,11 +81,10 @@ void lens_motor_run() {
   int signal = digitalRead(lens_motor_control_pin);
   unsigned long now = millis();
 
-  // 如果不是刚换方向，并且信号 LOW，且方向和上次相同 → 停止
-  if ((now - lens_last_direction_change_time > lens_direction_grace_period) &&
-      signal == LOW &&
-      lens_motor_last_state == lens_motor_run_state) {
-    lens_motor_stop();
+  if ((now - lens_last_direction_change_time > lens_direction_grace_period) 
+      && signal == LOW 
+      && lens_motor_last_state == lens_motor_run_state) {
+    lens_motor_run_state_change();
     return;
   }
 
