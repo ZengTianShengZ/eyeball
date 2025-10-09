@@ -10,6 +10,8 @@ void setup() {
   lens_light_sensor_init();
   lens_motor_init();
 
+  // oled_init();
+
 }
 
 void loop() {
