@@ -46,4 +46,10 @@ void lens_light_sensor_run() {
     lens_light_sensor_running_state = false;
     lens_motor_stop();
   }
+
+  if (lens_motor_run_state_change_count > 3 &&  difference < 50) {
+    Serial.println("光敏传感器_lens 最后数值 ++++++++++ 兜底 : " + String(lens_light_sensor_last_num));
+    lens_light_sensor_running_state = false;
+    lens_motor_stop();
+  }
 }
