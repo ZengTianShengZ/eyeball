@@ -43,7 +43,7 @@ void lens_motor_step(int dir) {
       digitalWrite(lens_motor_pin2, lens_step_sequence[i][1]);
       digitalWrite(lens_motor_pin3, lens_step_sequence[i][2]);
       digitalWrite(lens_motor_pin4, lens_step_sequence[i][3]);
-      delay(4);
+      delay(6);
     }
   } else { // 逆时针
     for (int i = 3; i >= 0; i--) {
@@ -51,7 +51,7 @@ void lens_motor_step(int dir) {
       digitalWrite(lens_motor_pin2, lens_step_sequence[i][1]);
       digitalWrite(lens_motor_pin3, lens_step_sequence[i][2]);
       digitalWrite(lens_motor_pin4, lens_step_sequence[i][3]);
-      delay(4);
+      delay(6);
     }
   }
 }

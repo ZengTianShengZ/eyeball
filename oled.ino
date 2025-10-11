@@ -14,28 +14,14 @@ void oled_init(void) {
 
 }
 
-void oled_update(int x, int y, String text) {
-  if (text != oled_current_text) {
-    oled_current_text = text;
-    // u8x8.clearDisplay();
-    // u8x8.drawString(x, y, text.c_str());
-    oled_show_shang();
-  }
-}
-
 void oled_show_init() {
   u8x8.clearDisplay();
   u8x8.setFont(u8x8_font_inb33_3x6_r);
-  u8x8.drawString(1, 2, "—^-^-");
+  u8x8.drawString(3, 1, "^-^");
 }
 
-void oled_show_shang() {
+void oled_show_t() {
   u8x8.clearDisplay();
-  u8x8.setFont(u8x8_font_victoriabold8_r); // 小号字体
-  u8x8.drawString(6, 0, "|");      // 上方竖线
-  u8x8.drawString(6, 1, "|");      // 中间竖线
-  u8x8.drawString(6, 2, "---");  // 中间横线
-  u8x8.drawString(6, 3, "|");      // 下方竖线
-  u8x8.drawString(6, 4, "|");      // 下方竖线
-  u8x8.drawString(3, 5, "--------");      // 下方竖线
+  u8x8.setFont(u8x8_font_inb33_3x6_r);
+  u8x8.drawString(6, 1, "T");
 }
