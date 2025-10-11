@@ -11,7 +11,7 @@ int pupil_motor_run_state = HIGH;
 int pupil_motor_last_state = HIGH;
 
 unsigned long pupil_last_direction_change_time = 0;
-const unsigned long pupil_direction_grace_period = 1000; // 宽限时间（毫秒）
+const unsigned long pupil_direction_grace_period = 500; // 宽限时间（毫秒）
 
 const int pupil_step_sequence[4][4] = {
   {1, 1, 0, 0},
@@ -41,7 +41,7 @@ void pupil_motor_step(int dir) {
       digitalWrite(pupil_motor_pin2, pupil_step_sequence[i][1]);
       digitalWrite(pupil_motor_pin3, pupil_step_sequence[i][2]);
       digitalWrite(pupil_motor_pin4, pupil_step_sequence[i][3]);
-      delay(3);
+      delay(2);
     }
   } else { // 逆时针
     for (int i = 3; i >= 0; i--) {
@@ -49,7 +49,7 @@ void pupil_motor_step(int dir) {
       digitalWrite(pupil_motor_pin2, pupil_step_sequence[i][1]);
       digitalWrite(pupil_motor_pin3, pupil_step_sequence[i][2]);
       digitalWrite(pupil_motor_pin4, pupil_step_sequence[i][3]);
-      delay(3);
+      delay(2);
     }
   }
 }

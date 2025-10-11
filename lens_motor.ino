@@ -43,7 +43,7 @@ void lens_motor_step(int dir) {
       digitalWrite(lens_motor_pin2, lens_step_sequence[i][1]);
       digitalWrite(lens_motor_pin3, lens_step_sequence[i][2]);
       digitalWrite(lens_motor_pin4, lens_step_sequence[i][3]);
-      delay(8);
+      delay(4);
     }
   } else { // 逆时针
     for (int i = 3; i >= 0; i--) {
@@ -51,7 +51,7 @@ void lens_motor_step(int dir) {
       digitalWrite(lens_motor_pin2, lens_step_sequence[i][1]);
       digitalWrite(lens_motor_pin3, lens_step_sequence[i][2]);
       digitalWrite(lens_motor_pin4, lens_step_sequence[i][3]);
-      delay(8);
+      delay(4);
     }
   }
 }
@@ -86,7 +86,6 @@ void lens_motor_run_state_change() {
   }
   lens_last_direction_change_time = millis(); // 记录方向切换时间
   lens_motor_run_state_change_count++;
-  Serial.println("lens_motor Direction changed!");
 }
 
 void lens_motor_stop() {

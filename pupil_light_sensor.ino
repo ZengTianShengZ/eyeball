@@ -23,12 +23,8 @@ void pupil_light_sensor_run() {
   // 只有状态变化时才打印
   if (pupil_light_sensor_num != pupil_light_sensor_last_state) {
     if (pupil_light_sensor_num == HIGH) {
-      Serial.println("光敏传感器_pupil 无光照");
-      // motor_pupil_running_state = true;
       pupil_motor_run_state_change(HIGH);
     } else {
-      Serial.println("光敏传感器_pupil 有光照");
-      // motor_pupil_running_state = true;
       pupil_motor_run_state_change(LOW);
     }
     pupil_light_sensor_last_state = pupil_light_sensor_num; // 更新上次状态
