@@ -16,8 +16,8 @@ void oled_init(void) {
 
 void oled_show_init() {
   u8x8.clearDisplay();
-  u8x8.setFont(u8x8_font_inb33_3x6_r);
-  u8x8.drawString(3, 1, "^-^");
+  // u8x8.setFont(u8x8_font_inb33_3x6_r);
+  // u8x8.drawString(3, 1, "^-^");
 }
 
 void oled_show_t() {

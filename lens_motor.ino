@@ -66,11 +66,11 @@ void lens_motor_control_low_pin_check() {
 
   unsigned long now = millis();
 
-  if (now - lens_last_control_low_pin_check_time > 6000) {
+  if (now - lens_last_control_low_pin_check_time > 2000) {
    return;
   }
 
-  if (now - lens_last_control_low_pin_check_time > 3000 && signal == LOW) {
+  if (now - lens_last_control_low_pin_check_time > 1500 && signal == LOW) {
     lens_motor_run_state_change();
   }
  
