@@ -9,12 +9,14 @@ bool pupil_light_sensor_last_state = HIGH;  // 初始值设为 HIGH（无光）
 void pupil_light_sensor_init() {  
   pinMode(pupil_light_sensor_DO, INPUT);
   pupil_light_sensor_running_state = false;
-  pupil_light_sensor_last_state = digitalRead(pupil_light_sensor_DO); // 初始化为当前状态
+  // pupil_light_sensor_last_state = digitalRead(pupil_light_sensor_DO); // 初始化为当前状态
+  pupil_light_sensor_last_state = HIGH;
   Serial.println("光敏传感器_pupil DO控制程序启动");
 }
 
 void pupil_light_sensor_run() {
   if (!pupil_light_sensor_running_state) {
+    pupil_light_sensor_last_state = HIGH;
     return;
   }
 

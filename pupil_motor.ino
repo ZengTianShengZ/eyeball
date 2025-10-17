@@ -66,6 +66,12 @@ void pupil_motor_control_low_pin_check() {
     pupil_motor_step(HIGH);
   }
 
+  signal = digitalRead(pupil_motor_control_pin);
+  if (signal != LOW) {
+    pupil_motor_stop();
+    return;
+  } 
+
   for (int i = 60; i >= 0; i--) {
     pupil_motor_step(LOW);
   }

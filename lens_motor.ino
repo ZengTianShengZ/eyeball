@@ -67,6 +67,12 @@ void lens_motor_control_low_pin_check() {
     lens_motor_step(HIGH);
   }
 
+  signal = digitalRead(lens_motor_control_pin);
+  if (signal != LOW) {
+    lens_motor_stop();
+    return;
+  } 
+
   for (int i = 60; i >= 0; i--) {
     lens_motor_step(LOW);
   }
