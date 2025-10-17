@@ -22,6 +22,5 @@ void loop() {
   lens_button_run();
   lens_light_sensor_run();
   lens_motor_run();
-
 }
  
