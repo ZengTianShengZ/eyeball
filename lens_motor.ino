@@ -55,6 +55,21 @@ void lens_motor_step(int dir) {
   }
 }
 
+void lens_motor_check_direction(int direction, int steps) {
+  for (int i = 0; i < steps; i++) {
+    lens_motor_step(direction);
+    int signal = digitalRead(lens_motor_control_pin);
+    if (signal != LOW) {
+      // 额外补 10 步
+      for (int j = 0; j < 10; j++) {
+        lens_motor_step(direction);
+      }
+      lens_motor_stop();
+      return;
+    }
+  }
+}
+
 void lens_motor_control_low_pin_check() {
   int signal = digitalRead(lens_motor_control_pin);
 
@@ -62,20 +77,18 @@ void lens_motor_control_low_pin_check() {
     lens_motor_stop();
     return;
   } 
-
-  for (int i = 60; i >= 0; i--) {
-    lens_motor_step(HIGH);
-  }
+  
+  // 先正向检测
+  lens_motor_check_direction(HIGH, 60);
 
   signal = digitalRead(lens_motor_control_pin);
   if (signal != LOW) {
     lens_motor_stop();
     return;
-  } 
-
-  for (int i = 60; i >= 0; i--) {
-    lens_motor_step(LOW);
   }
+
+  // 再反向检测
+  lens_motor_check_direction(LOW, 60);
 }
 
 void lens_motor_run_state_change() {

@@ -1,7 +1,7 @@
 extern void pupil_motor_run_state_change();
 
 // 定义引脚
-const int pupil_light_sensor_DO = A1;    // 光敏模块DO引脚连接 A1
+const int pupil_light_sensor_DO = A3;    // 光敏模块DO引脚连接 A1
 
 bool pupil_light_sensor_running_state = false; // 是否开启光敏传感器
 bool pupil_light_sensor_last_state = HIGH;  // 初始值设为 HIGH（无光）
