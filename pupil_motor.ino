@@ -5,10 +5,10 @@ const int pupil_motor_pin2 = 5;
 const int pupil_motor_pin3 = 6;
 const int pupil_motor_pin4 = 7;
 
-const int pupil_motor_control_pin = 13; // 输入信号引脚
+const int pupil_motor_control_pin1 = A1; // 输入信号引脚
+const int pupil_motor_control_pin2 = A2; // 输入信号引脚
 
 int pupil_motor_run_state = HIGH;
-int pupil_motor_last_state = HIGH;
 
 unsigned long pupil_last_direction_change_time = 0;
 const unsigned long pupil_direction_grace_period = 1500; // 宽限时间（毫秒）
@@ -26,10 +26,10 @@ void pupil_motor_init() {
   pinMode(pupil_motor_pin3, OUTPUT);
   pinMode(pupil_motor_pin4, OUTPUT);
 
-  pinMode(pupil_motor_control_pin, INPUT_PULLUP);
+  pinMode(pupil_motor_control_pin1, INPUT_PULLUP);
+  pinMode(pupil_motor_control_pin2, INPUT_PULLUP);
 
   pupil_motor_run_state = HIGH;
-  pupil_motor_last_state = HIGH;
 
   Serial.println("Motor2 initialized. Using INPUT_PULLUP, active LOW.");
 } 
@@ -54,49 +54,8 @@ void pupil_motor_step(int dir) {
   }
 }
 
-void pupil_motor_check_direction(int direction, int steps) {
-  for (int i = 0; i < steps; i++) {
-    pupil_motor_step(direction);
-    int signal = digitalRead(pupil_motor_control_pin);
-    if (signal != LOW) {
-      // 额外补 10 步
-      for (int j = 0; j < 10; j++) {
-        pupil_motor_step(direction);
-      }
-      pupil_motor_stop();
-      return;
-    }
-  }
-}
-
-
-void pupil_motor_control_low_pin_check() {
-  int signal = digitalRead(pupil_motor_control_pin);
-
-  if (signal != LOW) {
-    pupil_motor_stop();
-    return;
-  } 
-  
-  // 先正向检测
-  pupil_motor_check_direction(HIGH, 60);
-
-  signal = digitalRead(pupil_motor_control_pin);
-  if (signal != LOW) {
-    pupil_motor_stop();
-    return;
-  }
-
-  // 再反向检测
-  pupil_motor_check_direction(LOW, 60);
-}
-
 void pupil_motor_run_state_change(int state) {
-  if (pupil_motor_run_state != state) {
-    pupil_motor_run_state = state;
-    pupil_last_direction_change_time = millis(); // 记录方向切换时间
-    Serial.println("Direction changed!");
-  }
+  pupil_motor_run_state = state;
 }
 
 void pupil_motor_stop() {
@@ -108,22 +67,22 @@ void pupil_motor_stop() {
 
 void pupil_motor_run() {
   if (!pupil_light_sensor_running_state) {
-    pupil_motor_control_low_pin_check();
     return;
   }
 
-  int signal = digitalRead(pupil_motor_control_pin);
-  unsigned long now = millis();
+  int signalTop = digitalRead(pupil_motor_control_pin1);
+  int signalBottom = digitalRead(pupil_motor_control_pin2);
+  
+  if (signalTop == LOW && pupil_motor_run_state == HIGH) {
+    pupil_motor_stop();
+    return;
+  }
 
-  // 如果不是刚换方向，并且信号 LOW，且方向和上次相同 → 停止
-  if ((now - pupil_last_direction_change_time > pupil_direction_grace_period) &&
-      signal == LOW &&
-      pupil_motor_last_state == pupil_motor_run_state) {
+  if (signalBottom == LOW && pupil_motor_run_state == LOW) {
     pupil_motor_stop();
     return;
   }
 
   // 否则允许运动
   pupil_motor_step(pupil_motor_run_state);
-  pupil_motor_last_state = pupil_motor_run_state;
 }
