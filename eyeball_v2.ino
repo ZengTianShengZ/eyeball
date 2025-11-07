@@ -12,6 +12,8 @@ void setup() {
 
   oled_init();
 
+  // tof050c_init();
+
 }
 
 void loop() {
@@ -22,5 +24,7 @@ void loop() {
   lens_button_run();
   lens_light_sensor_run();
   lens_motor_run();
+
+  // tof050c_run();
 }
  

@@ -2,6 +2,7 @@ extern int lens_motor_run_state_change_count;
 extern void lens_motor_stop();
 extern void oled_show_init();
 extern void oled_show_t();
+extern int tof050c_getRange();
 
 // 定义引脚
 const int lens_light_sensor_DO = A0;    // 光敏模块DO数字引脚连接 A0
@@ -48,12 +49,21 @@ void lens_light_sensor_run() {
     lens_light_sensor_last_num = lens_light_sensor_num;
   }
 
+  
+  if ( lens_motor_run_state_change_count >=1) {
+    if (lens_light_sensor_num - lens_light_sensor_last_num  > 20) {
+      lens_light_sensor_stop();
+      oled_show_t();
+      return;
+    }
+  }
+ 
+
   int difference = abs(lens_light_sensor_num - lens_light_sensor_last_num);
 
-  Serial.println(lens_motor_run_state_change_count);
-  Serial.println(lens_light_sensor_num);
-  Serial.println(lens_light_sensor_last_num);
-  Serial.println(difference);
+  // Serial.println(difference);
+  // Serial.println(lens_motor_run_state_change_count);
+
   if (lens_motor_run_state_change_count >= 2 &&  difference < 4) {
     lens_light_sensor_stop();
     oled_show_t();
