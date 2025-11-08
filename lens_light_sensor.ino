@@ -25,7 +25,6 @@ void lens_light_sensor_state_change() {
   Serial.println("光敏传感器_lens 状态改变");
   oled_show_init();
   lens_light_sensor_last_num = lens_light_sensor_num_max; // 初始化为当前状态
-  lens_motor_run_state_change_count = 0;
   lens_light_sensor_running_state = !lens_light_sensor_running_state;
 }
 
@@ -54,37 +53,6 @@ void lens_light_sensor_run() {
     if (lens_light_sensor_num - lens_light_sensor_last_num  > 20) {
       lens_light_sensor_stop();
       oled_show_t();
-      return;
     }
-  }
- 
-
-  int difference = abs(lens_light_sensor_num - lens_light_sensor_last_num);
-
-  // Serial.println(difference);
-  // Serial.println(lens_motor_run_state_change_count);
-
-  if (lens_motor_run_state_change_count >= 2 &&  difference < 4) {
-    lens_light_sensor_stop();
-    oled_show_t();
-  }
-
-  if (lens_motor_run_state_change_count >= 3 &&  difference < 8) {
-    lens_light_sensor_stop();
-    oled_show_t();
-  }
-
-  if (lens_motor_run_state_change_count >= 4 &&  difference < 15) {
-    lens_light_sensor_stop();
-    oled_show_t();
-  }
-  
-  if (lens_motor_run_state_change_count >= 5 &&  difference < 30) {
-    lens_light_sensor_stop();
-    oled_show_t();
-  }
-
-  if (lens_motor_run_state_change_count >= 6) {
-    lens_light_sensor_stop();
   }
 }

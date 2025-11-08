@@ -10,10 +10,6 @@ const int lens_motor_control_pin_left = 13; // 输入信号引脚
 
 int lens_motor_run_state_change_count = 0;
 int lens_motor_run_state = HIGH;
-int lens_motor_last_state = HIGH;
-
-unsigned long lens_last_direction_change_time = 0;
-const unsigned long lens_direction_grace_period = 1000; // 宽限时间（毫秒）
 
 const int lens_step_sequence[4][4] = {
   {1, 1, 0, 0},
@@ -34,7 +30,6 @@ void lens_motor_init() {
   lens_motor_stop();
 
   lens_motor_run_state = HIGH;
-  lens_motor_last_state = HIGH;
 
   Serial.println("Motor2 initialized. Using INPUT_PULLUP, active LOW.");
 } 
@@ -66,6 +61,8 @@ void lens_motor_run_state_change() {
 }
 
 void lens_motor_stop() {
+  lens_motor_run_state = HIGH;
+  lens_motor_run_state_change_count = 0;
   digitalWrite(lens_motor_pin1, LOW);
   digitalWrite(lens_motor_pin2, LOW);
   digitalWrite(lens_motor_pin3, LOW);
