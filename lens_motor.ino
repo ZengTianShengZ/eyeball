@@ -10,6 +10,7 @@ const int lens_motor_control_pin_left = 13; // 输入信号引脚
 
 int lens_motor_run_state_change_count = 0;
 int lens_motor_run_state = HIGH;
+unsigned long lens_motor_run_state_change_time = 0;  // 状态改变的时间
 
 const int lens_step_sequence[4][4] = {
   {1, 1, 0, 0},
@@ -58,6 +59,7 @@ void lens_motor_run_state_change() {
   Serial.println("Lens motor run state changed!");
   lens_motor_run_state = !lens_motor_run_state;
   lens_motor_run_state_change_count++;
+  lens_motor_run_state_change_time = millis();  // 记录状态改变的时间
 }
 
 void lens_motor_stop() {
