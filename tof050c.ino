@@ -10,6 +10,9 @@ int filter_buffer[FILTER_SIZE] = {0};
 int filter_index = 0;
 bool filter_initialized = false;
 
+// 存储最后计算的平均值
+int tof050c_current_average_value = -1;  // 初始化为-1表示尚未计算
+
 void tof050c_init() {
   if (!vl.begin()) {
     Serial.println("ToF sensor: Failed to find sensor, continuing without it...");
@@ -58,6 +61,29 @@ int tof050c_getRange() {
   }
   
   return (int)(sum / count);
+}
+
+/**
+获取当前的值5次，并取平均值，并记录存储起来给后面的功能逻辑使用
+返回计算得到的平均值，如果读取失败返回-1
+*/
+void tof050c_get_current_value() {
+   
+  // 读取5次值
+  int sum = 0;
+  const int SAMPLE_COUNT = 5;  // 采样次数
+
+  for (int i = 0; i < SAMPLE_COUNT; i++) {
+    int distance = tof050c_getRange();
+    if (distance >= 0) {
+      sum += distance;
+    }
+    delay(10);
+  }
+  
+  tof050c_current_average_value = sum / SAMPLE_COUNT;
+  Serial.println("tof050c_current_average_value: ");
+  Serial.println(tof050c_current_average_value);
 }
 
 void tof050c_run() {

@@ -12,7 +12,7 @@ void setup() {
 
   oled_init();
 
-  // tof050c_init();
+  tof050c_init();
 
 }
 

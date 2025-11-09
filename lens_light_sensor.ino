@@ -4,6 +4,7 @@ extern void lens_motor_stop();
 extern void oled_show_init();
 extern void oled_show_t();
 extern int tof050c_getRange();
+extern int tof050c_current_average_value;
 
 // 定义引脚
 const int lens_light_sensor_DO = A0;    // 光敏模块DO数字引脚连接 A0
@@ -64,8 +65,19 @@ void lens_light_sensor_run() {
     lens_light_sensor_last_num = lens_light_sensor_num;
   }
 
-  
-  if ( lens_motor_run_state_change_count >=1 && (millis() - lens_motor_run_state_change_time) > 2000) {
+  int tof050c_distance = tof050c_getRange();
+
+  Serial.println(tof050c_distance);
+
+  // 如果电机运行状态改变次数大于等于1，且TOF传感器距离小于等于8，则停止光敏传感器
+  if (lens_motor_run_state_change_count >=1  && tof050c_distance <= tof050c_current_average_value && tof050c_current_average_value > 0) {
+    lens_light_sensor_stop();
+      oled_show_t();
+  }
+
+
+  // 如果电机运行状态改变次数大于等于1，且最小值大于5，则停止光敏传感器
+  if (tof050c_current_average_value < 0 && lens_motor_run_state_change_count >=1 && (millis() - lens_motor_run_state_change_time) > 2000) {
     if (lens_light_sensor_num - lens_light_sensor_last_num  > 5) {
       lens_light_sensor_stop();
       oled_show_t();
