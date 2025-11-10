@@ -1,0 +1,129 @@
+#include <Wire.h>
+#include <VL6180X.h>
+
+VL6180X sensor;
+
+// 移动平均滤波参数
+#define FILTER_SIZE 5  // 滤波窗口大小，可以调整（3-10之间效果较好）
+int filter_buffer[FILTER_SIZE] = {0};
+int filter_index = 0;
+bool filter_initialized = false;
+
+// 存储最后计算的平均值
+int tof050c_current_average_value = -1;  // 初始化为-1表示尚未计算
+
+int tof050c_is_timeout = 0;
+
+int SAMPLE_COUNT = 5;  // 采样次数
+
+
+void tof050c_init() {
+  Wire.begin();
+
+  sensor.init();
+  sensor.configureDefault();
+
+  // Reduce range max convergence time and ALS integration
+  // time to 30 ms and 50 ms, respectively, to allow 10 Hz
+  // operation (as suggested by table "Interleaved mode
+  // limits (10 Hz operation)" in the datasheet).
+  sensor.writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 30);
+  sensor.writeReg16Bit(VL6180X::SYSALS__INTEGRATION_PERIOD, 50);
+
+  sensor.setTimeout(500);
+
+   // stop continuous mode if already active
+  sensor.stopContinuous();
+  // in case stopContinuous() triggered a single-shot
+  // measurement, wait for it to complete
+  delay(300);
+  // start interleaved continuous mode with period of 100 ms
+  sensor.startInterleavedContinuous(100);
+
+  tof050c_is_timeout = 0;
+}
+ 
+// 读取距离值（单位：mm，范围0-200mm）
+// 返回-1表示读取失败或传感器未初始化
+// 使用移动平均滤波消除波动
+int tof050c_getRange() {
+
+  if (tof050c_is_timeout >= SAMPLE_COUNT) {
+    return -1;
+  }
+
+  uint8_t range = sensor.readRangeContinuousMillimeters();
+   
+  if (sensor.timeoutOccurred()) {
+    Serial.println("tof050c_is_timeout: ");
+    Serial.println(tof050c_is_timeout);
+    // 读取失败，返回-1
+    tof050c_is_timeout++;
+    return -1;
+  }
+
+  tof050c_is_timeout = 0;
+  
+  int raw_value = (int)range;
+  
+  // 移动平均滤波：将新值加入缓冲区
+  filter_buffer[filter_index] = raw_value;
+  filter_index = (filter_index + 1) % FILTER_SIZE;
+  
+  // 如果缓冲区未填满，标记为已初始化
+  if (!filter_initialized) {
+    if (filter_index == 0) {
+      filter_initialized = true;  // 缓冲区已填满
+    }
+  }
+  
+  // 计算平均值
+  long sum = 0;
+  int count = filter_initialized ? FILTER_SIZE : filter_index;
+  
+  for (int i = 0; i < count; i++) {
+    sum += filter_buffer[i];
+  }
+  
+  return (int)(sum / count);
+}
+
+/**
+获取当前的值5次，并取平均值，并记录存储起来给后面的功能逻辑使用
+返回计算得到的平均值，如果读取失败返回-1
+*/
+void tof050c_get_current_value() {
+   
+  // 读取5次值
+  int sum = 0;
+
+  for (int i = 0; i < SAMPLE_COUNT; i++) {
+    int distance = tof050c_getRange();
+    if (distance >= 0) {
+      sum += distance;
+    }
+    delay(10);
+  }
+
+  if (sum == 0) {
+    return;
+  }
+  
+  tof050c_current_average_value = sum / SAMPLE_COUNT;
+  Serial.println("tof050c_current_average_value: ");
+  Serial.println(tof050c_current_average_value);
+}
+
+void tof050c_run() {
+  int distance = tof050c_getRange();
+  
+  if (distance >= 0) {
+    Serial.print("Distance: ");
+    Serial.print(distance);
+    Serial.println(" mm");
+  } else {
+    Serial.println("Distance read failed");
+  }
+  
+  delay(50);
+}
